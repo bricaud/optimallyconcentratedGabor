@@ -1,0 +1,42 @@
+function [obj1 obj2 obj3] = compute_obj_function_signal(f,signal_ton,signal_trans,spec_ton, spec_trans,p1,q1,p2,q2,group1,group2)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% USE: 
+%   [obj1 obj2 obj3] =
+%   compute_obj_function_signal(f,signal_ton,signal_trans,spec_ton,
+%   spec_trans,p1,q1,p2,q2,group1,group2)
+%   
+% 
+% FUNCTION:
+%   Compute the terms of the objective function of the tonal/transient separation problem 
+% 
+% 
+% INPUT: 
+%       f: original temporal signal
+%       signal_ton: current temporal tonal component
+%       signal_trans: current temporal transient component
+%       spec_ton: current spectogram for tonal component
+%       spec_trans: current spectrogram 
+%       p1,q1: regularization norm on the tonal component
+%       p2,q2: regularization norm on the transient component
+%       group1: groups for tonal component
+%       group2:
+%
+% OUTPUT:
+%       obj1: Regression term
+%       obj2: Regularization term on the tonal part (norm 1)
+%       obj3: Regularization term on the transient part (mixed norm 2,1)
+%       
+%
+% NOTA: Ponderations should probably be taken in account in the calculus. TODO 
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% GENESIS S.A. - www.genesis.fr - January 2011 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+obj1 = 0.5*(norm(signal_ton' + signal_trans' - f',2))^2;
+obj2 = (1/(numel(spec_ton)))*(1/q1)*(compute_normeqp(spec_ton,p1,q1,group1))^q1;
+obj3 = (1/(size(group2,1)))*(1/q2)*(compute_normeqp(spec_trans,p2,q2,group2))^q2;
+end
